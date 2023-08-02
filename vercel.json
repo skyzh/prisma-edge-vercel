@@ -1,0 +1,7 @@
+{
+    "functions": {
+        "api/neon-query.js": {
+            "maxDuration": 5
+        }
+    }
+}

@@ -5,10 +5,6 @@ const nextConfig = {
     config,
     { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }
   ) => {
-    config.experiments = {
-      asyncWebAssembly: true,
-      layers: true,
-    }
     // Important: return the modified config
     return config
   },

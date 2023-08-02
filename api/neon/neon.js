@@ -5991,7 +5991,16 @@ function makeMutClosure(arg0, arg1, dtor, f) {
   return real;
 }
 function __wbg_adapter_48(arg0, arg1, arg2) {
-  wasm.wasm_bindgen__convert__closures__invoke1_mut__h68e02e82cc2ac92f(arg0, arg1, addHeapObject(arg2));
+  wasm.wasm_bindgen__convert__closures__invoke1_mut__h899115754c2e1f0f(arg0, arg1, addHeapObject(arg2));
+}
+function _assertClass(instance, klass) {
+  if (!(instance instanceof klass)) {
+    throw new Error(`expected instance of ${klass.name}`);
+  }
+  return instance.ptr;
+}
+function initPanicHook() {
+  wasm.initPanicHook();
 }
 function handleError(f, args) {
   try {
@@ -6001,8 +6010,210 @@ function handleError(f, args) {
   }
 }
 function __wbg_adapter_132(arg0, arg1, arg2, arg3) {
-  wasm.wasm_bindgen__convert__closures__invoke2_mut__ha447ab503a246df4(arg0, arg1, addHeapObject(arg2), addHeapObject(arg3));
+  wasm.wasm_bindgen__convert__closures__invoke2_mut__h61995631f7679ef5(arg0, arg1, addHeapObject(arg2), addHeapObject(arg3));
 }
+var JsQueryable = class _JsQueryable {
+  static __wrap(ptr) {
+    const obj = Object.create(_JsQueryable.prototype);
+    obj.ptr = ptr;
+    return obj;
+  }
+  __destroy_into_raw() {
+    const ptr = this.ptr;
+    this.ptr = 0;
+    return ptr;
+  }
+  free() {
+    const ptr = this.__destroy_into_raw();
+    wasm.__wbg_jsqueryable_free(ptr);
+  }
+  /**
+  * @param {Proxy} proxy
+  * @param {string} flavor
+  */
+  constructor(proxy, flavor) {
+    _assertClass(proxy, Proxy2);
+    var ptr0 = proxy.__destroy_into_raw();
+    const ptr1 = passStringToWasm0(flavor, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len1 = WASM_VECTOR_LEN;
+    const ret = wasm.jsqueryable_new(ptr0, ptr1, len1);
+    return _JsQueryable.__wrap(ret);
+  }
+};
+var Proxy2 = class _Proxy {
+  static __wrap(ptr) {
+    const obj = Object.create(_Proxy.prototype);
+    obj.ptr = ptr;
+    return obj;
+  }
+  __destroy_into_raw() {
+    const ptr = this.ptr;
+    this.ptr = 0;
+    return ptr;
+  }
+  free() {
+    const ptr = this.__destroy_into_raw();
+    wasm.__wbg_proxy_free(ptr);
+  }
+  /**
+  * @param {Function} query_raw
+  * @param {Function} execute_raw
+  * @param {Function} version
+  * @param {Function} close
+  * @param {Function} is_healthy
+  * @param {string} flavor
+  */
+  constructor(query_raw, execute_raw, version, close, is_healthy, flavor) {
+    const ptr0 = passStringToWasm0(flavor, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.proxy_new(addHeapObject(query_raw), addHeapObject(execute_raw), addHeapObject(version), addHeapObject(close), addHeapObject(is_healthy), ptr0, len0);
+    return _Proxy.__wrap(ret);
+  }
+};
+var QueryEngine = class _QueryEngine {
+  static __wrap(ptr) {
+    const obj = Object.create(_QueryEngine.prototype);
+    obj.ptr = ptr;
+    return obj;
+  }
+  __destroy_into_raw() {
+    const ptr = this.ptr;
+    this.ptr = 0;
+    return ptr;
+  }
+  free() {
+    const ptr = this.__destroy_into_raw();
+    wasm.__wbg_queryengine_free(ptr);
+  }
+  /**
+  * Parse a validated datamodel and configuration to allow connecting later on.
+  * Note: any new method added to this struct should be added to
+  * `query_engine_node_api::node_drivers::engine::QueryEngineNodeDrivers` as well.
+  * Unfortunately the `#[napi]` macro does not support deriving traits.
+  * @param {any} options
+  * @param {Function} callback
+  * @param {JsQueryable | undefined} maybe_driver
+  */
+  constructor(options, callback, maybe_driver) {
+    try {
+      const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+      let ptr0 = 0;
+      if (!isLikeNone(maybe_driver)) {
+        _assertClass(maybe_driver, JsQueryable);
+        ptr0 = maybe_driver.__destroy_into_raw();
+      }
+      wasm.queryengine_new(retptr, addHeapObject(options), addHeapObject(callback), ptr0);
+      var r0 = getInt32Memory0()[retptr / 4 + 0];
+      var r1 = getInt32Memory0()[retptr / 4 + 1];
+      var r2 = getInt32Memory0()[retptr / 4 + 2];
+      if (r2) {
+        throw takeObject(r1);
+      }
+      return _QueryEngine.__wrap(r0);
+    } finally {
+      wasm.__wbindgen_add_to_stack_pointer(16);
+    }
+  }
+  /**
+  * Connect to the database, allow queries to be run.
+  * @param {string} trace
+  * @returns {Promise<void>}
+  */
+  connect(trace) {
+    const ptr0 = passStringToWasm0(trace, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.queryengine_connect(this.ptr, ptr0, len0);
+    return takeObject(ret);
+  }
+  /**
+  * Disconnect and drop the core. Can be reconnected later with `#connect`.
+  * @param {string} trace
+  * @returns {Promise<void>}
+  */
+  disconnect(trace) {
+    const ptr0 = passStringToWasm0(trace, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.queryengine_disconnect(this.ptr, ptr0, len0);
+    return takeObject(ret);
+  }
+  /**
+  * If connected, sends a query to the core and returns the response.
+  * @param {string} body
+  * @param {string} trace
+  * @param {string | undefined} tx_id
+  * @returns {Promise<string>}
+  */
+  query(body, trace, tx_id) {
+    const ptr0 = passStringToWasm0(body, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ptr1 = passStringToWasm0(trace, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len1 = WASM_VECTOR_LEN;
+    var ptr2 = isLikeNone(tx_id) ? 0 : passStringToWasm0(tx_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    var len2 = WASM_VECTOR_LEN;
+    const ret = wasm.queryengine_query(this.ptr, ptr0, len0, ptr1, len1, ptr2, len2);
+    return takeObject(ret);
+  }
+  /**
+  * If connected, attempts to start a transaction in the core and returns its ID.
+  * @param {string} input
+  * @param {string} trace
+  * @returns {Promise<string>}
+  */
+  startTransaction(input, trace) {
+    const ptr0 = passStringToWasm0(input, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ptr1 = passStringToWasm0(trace, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len1 = WASM_VECTOR_LEN;
+    const ret = wasm.queryengine_startTransaction(this.ptr, ptr0, len0, ptr1, len1);
+    return takeObject(ret);
+  }
+  /**
+  * If connected, attempts to commit a transaction with id `tx_id` in the core.
+  * @param {string} tx_id
+  * @param {string} _trace
+  * @returns {Promise<string>}
+  */
+  commitTransaction(tx_id, _trace) {
+    const ptr0 = passStringToWasm0(tx_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ptr1 = passStringToWasm0(_trace, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len1 = WASM_VECTOR_LEN;
+    const ret = wasm.queryengine_commitTransaction(this.ptr, ptr0, len0, ptr1, len1);
+    return takeObject(ret);
+  }
+  /**
+  * @param {string} trace
+  * @returns {Promise<string>}
+  */
+  dmmf(trace) {
+    const ptr0 = passStringToWasm0(trace, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.queryengine_dmmf(this.ptr, ptr0, len0);
+    return takeObject(ret);
+  }
+  /**
+  * If connected, attempts to roll back a transaction with id `tx_id` in the core.
+  * @param {string} tx_id
+  * @param {string} _trace
+  * @returns {Promise<string>}
+  */
+  rollbackTransaction(tx_id, _trace) {
+    const ptr0 = passStringToWasm0(tx_id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ptr1 = passStringToWasm0(_trace, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len1 = WASM_VECTOR_LEN;
+    const ret = wasm.queryengine_rollbackTransaction(this.ptr, ptr0, len0, ptr1, len1);
+    return takeObject(ret);
+  }
+  /**
+  * Loads the query schema. Only available when connected.
+  * @returns {Promise<string>}
+  */
+  sdlSchema() {
+    const ret = wasm.queryengine_sdlSchema(this.ptr);
+    return takeObject(ret);
+  }
+};
 async function load(module2, imports) {
   if (typeof Response === "function" && module2 instanceof Response) {
     if (typeof WebAssembly.instantiateStreaming === "function") {
@@ -6215,6 +6426,8 @@ function getImports() {
     }, arguments);
   };
   imports.wbg.__wbg_now_c644db5194be8437 = function(arg0) {
+    console.log(arg0)
+    return 0;
     const ret = getObject(arg0).now();
     return ret;
   };
@@ -6406,7 +6619,7 @@ function getImports() {
     const ret = new Error(getStringFromWasm0(arg0, arg1));
     return addHeapObject(ret);
   };
-  imports.wbg.__wbindgen_closure_wrapper6535 = function(arg0, arg1, arg2) {
+  imports.wbg.__wbindgen_closure_wrapper6544 = function(arg0, arg1, arg2) {
     const ret = makeMutClosure(arg0, arg1, 351, __wbg_adapter_48);
     return addHeapObject(ret);
   };
@@ -6438,16 +6651,17 @@ async function init(input) {
 var query_engine_default = init;
 
 // src/util.ts
-var import_query_engine_bg = __toESM(require("./query_engine_bg-WXHMA2TR.wasm?module"), 1);
+var import_query_engine_bg = __toESM(require("./query_engine_bg-C5DLLKPH.wasm?module"), 1);
 
 // prisma/schema.prisma
 var schema_default = 'generator client {\n  provider = "prisma-client-js"\n  // previewFeatures = ["jsConnectors"]\n}\n\ndatasource db {\n  provider          = "@prisma/neon"\n  url               = env("JS_NEON_DATABASE_URL")\n  shadowDatabaseUrl = env("JS_NEON_SHADOW_DATABASE_URL")\n}\n\nmodel some_users {\n  id        Int    @id @default(autoincrement())\n  firstname String @db.VarChar(32)\n  lastname  String @db.VarChar(32)\n}\n\nmodel type_test {\n  id                    Int                         @id @default(autoincrement())\n  smallint_column       Int                         @db.SmallInt\n  smallint_column_null  Int?                        @db.SmallInt\n  int_column            Int\n  int_column_null       Int?\n  bigint_column         BigInt\n  bigint_column_null    BigInt?\n  float_column          Float                       @db.Real\n  float_column_null     Float?                      @db.Real\n  double_column         Float\n  double_column_null    Float?\n  decimal_column        Decimal                     @db.Decimal(10, 2)\n  decimal_column_null   Decimal?                    @db.Decimal(10, 2)\n  boolean_column        Boolean\n  boolean_column_null   Boolean?\n  char_column           String                      @db.Char(10)\n  char_column_null      String?                     @db.Char(10)\n  varchar_column        String                      @db.VarChar(255)\n  varchar_column_null   String?                     @db.VarChar(255)\n  text_column           String                      @db.Text\n  text_column_null      String?                     @db.Text\n  date_column           DateTime                    @db.Date\n  date_column_null      DateTime?                   @db.Date\n  time_column           DateTime                    @db.Time(0)\n  time_column_null      DateTime?                   @db.Time(0)\n  datetime_column       DateTime\n  datetime_column_null  DateTime?\n  timestamp_column      DateTime                    @db.Timestamp(0)\n  timestamp_column_null DateTime?                   @db.Timestamp(0)\n  json_column           Json\n  json_column_null      Json?\n  enum_column           type_test_enum_column\n  enum_column_null      type_test_enum_column_null?\n}\n\nenum type_test_enum_column {\n  value1\n  value2\n  value3\n}\n\nenum type_test_enum_column_null {\n  value1\n  value2\n  value3\n}\n';
 
 // src/util.ts
 async function initQueryEngine(driver) {
-  const libqueryEngine = await query_engine_default(import_query_engine_bg.default);
-  libqueryEngine.initPanicHook();
-  const QueryEngine = libqueryEngine.QueryEngine;
+  console.log("init wasm")
+  await query_engine_default(import_query_engine_bg.default);
+  initPanicHook();
+  const QueryEngine2 = QueryEngine;
   const queryEngineOptions = {
     datamodel: schema_default,
     configDir: ".",
@@ -6460,19 +6674,23 @@ async function initQueryEngine(driver) {
   const logCallback = (...args) => {
     console.log(args);
   };
-  const driver1 = new libqueryEngine.JsQueryable(new libqueryEngine.Proxy(driver.queryRaw, driver.executeRaw, driver.version, driver.close, driver.isHealthy, driver.flavor), driver.flavor);
-  const engine = new QueryEngine(queryEngineOptions, logCallback, driver1);
+  console.log("create json queryable")
+  const driver1 = new JsQueryable(new Proxy2(driver.queryRaw, driver.executeRaw, driver.version, driver.close, driver.isHealthy, driver.flavor), driver.flavor);
+  console.log("create query engine")
+  const engine = new QueryEngine2(queryEngineOptions, logCallback, driver1);
   return engine;
 }
 
 // src/neon.ts
+var sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function query(q) {
   const connectionString = `${process.env.JS_NEON_DATABASE_URL}`;
   const db = createNeonConnector({
     connectionString
   });
   const driver = binder(db);
-  await setImmediate(0);
+  await sleep(0);
+  console.log("before init")
   const engine = await initQueryEngine(driver);
   console.log("[nodejs] connecting...");
   await engine.connect("trace");
@@ -6488,7 +6706,7 @@ async function query(q) {
   console.log("[nodejs] re-connecting...");
   await engine.connect("trace");
   console.log("[nodejs] re-connecting");
-  await setTimeout(0);
+  await sleep(0);
   console.log("[nodejs] re-disconnecting...");
   await engine.disconnect("trace");
   console.log("[nodejs] re-disconnected");
