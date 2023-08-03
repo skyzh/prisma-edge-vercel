@@ -38,6 +38,7 @@ export default function Home() {
   const [sql, setSql] = useState('')
   const [intermediateResult, setIntermediateResult] = useState('')
   const [result, setResult] = useState('')
+  const [metadata, setMetadata] = useState('')
   const [error, setError] = useState('')
 
   const submit = () => {
@@ -51,6 +52,7 @@ export default function Home() {
       setResult(JSON.stringify(j.body, null, 2))
       setIntermediateResult(JSON.stringify(j.result, null, 2))
       setSql(JSON.stringify(j.query, null, 2))
+      setMetadata(JSON.stringify(j.metadata, null, 2))
     }
     run().then(() => { setError('') }).catch(e => { setError(e.toString()); console.error(e); })
   }
@@ -68,13 +70,15 @@ export default function Home() {
         <textarea value={query} onChange={e => setQuery(e.target.value)} style={{ width: "100%", height: "20rem", marginTop: "2em", whiteSpace: "pre", fontFamily: "monospace" }} />
         <input placeholder={router.query.key} value={key} onChange={e => setKey(e.target.value)} style={{ width: "100%", marginTop: "1em", fontFamily: "monospace" }} />
         <button style={{ marginTop: "1em", height: "3em", width: "10em", alignSelf: "center" }} onClick={submit}>Submit</button>
-        <h3>Response</h3>
-        <p style={{ whiteSpace: "pre-wrap", marginTop: "1em", fontFamily: "monospace" }}>{result}</p>
-        <h3>SQL</h3>
-        <p style={{ whiteSpace: "pre-wrap", marginTop: "1em", fontFamily: "monospace" }}>{sql}</p>
-        <h3>Postgres Response</h3>
-        <p style={{ whiteSpace: "pre-wrap", marginTop: "1em", fontFamily: "monospace" }}>{intermediateResult}</p>
-        <p style={{ whiteSpace: "pre-wrap", marginTop: "1em", fontFamily: "monospace", color: "red" }} >{error}</p>
+        <h3 style={{ marginTop: "1em" }}>Response</h3>
+        <p style={{ whiteSpace: "pre-wrap", fontFamily: "monospace" }}>{result}</p>
+        <h3 style={{ marginTop: "1em" }}>Metadata</h3>
+        <p style={{ whiteSpace: "pre-wrap", fontFamily: "monospace" }}>{metadata}</p>
+        <h3 style={{ marginTop: "1em" }}>SQL</h3>
+        <p style={{ whiteSpace: "pre-wrap", fontFamily: "monospace" }}>{sql}</p>
+        <h3 style={{ marginTop: "1em" }}>Postgres Response</h3>
+        <p style={{ whiteSpace: "pre-wrap", fontFamily: "monospace" }}>{intermediateResult}</p>
+        <p style={{ whiteSpace: "pre-wrap", fontFamily: "monospace", color: "red" }} >{error}</p>
       </main>
     </>
   )

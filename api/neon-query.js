@@ -1,11 +1,15 @@
 export const config = {
     runtime: 'edge',
+    region: ['iad1']
 };
+
+import { geolocation } from '@vercel/edge';
 
 import neon, { lastQuery, lastResult } from './neon/neon'
 
 export default async function handler(request) {
     try {
+        const { region } = geolocation(request);
         const urlParams = new URL(request.url).searchParams;
         const query = Object.fromEntries(urlParams);
         if (!process.env.NEON_KEY || query.key != process.env.NEON_KEY) {
@@ -41,6 +45,10 @@ export default async function handler(request) {
         return new Response(
             JSON.stringify({
                 body: result,
+                metadata: {
+                    region,
+                    runtime: EdgeRuntime,
+                },
                 query: lastQuery,
                 result: lastResult,
             }),
