@@ -6,29 +6,38 @@ import neon from './neon/neon'
 
 export default async function handler(request) {
     try {
-        const result = await neon(JSON.stringify({
-            "action": "findMany",
-            "modelName": "type_test",
-            "query": {
-                "selection": {
-                    "smallint_column": true,
-                    "int_column": true,
-                    "bigint_column": true,
-                    "float_column": true,
-                    "double_column": true,
-                    "decimal_column": true,
-                    "boolean_column": true,
-                    "char_column": true,
-                    "varchar_column": true,
-                    "text_column": true,
-                    "date_column": true,
-                    "time_column": true,
-                    "timestamp_column": true,
-                    "json_column": true,
-                    "enum_column": true
-                }
-            }
-        }))
+        const urlParams = new URL(request.url).searchParams;
+        const query = Object.fromEntries(urlParams);
+        if (!process.env.NEON_KEY || query.key != process.env.NEON_KEY) {
+            return new Response(
+                JSON.stringify({
+                    error: "mismatched key",
+                }),
+                {
+                    status: 400,
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                },
+            );
+        }
+        let body;
+        try {
+            body = await request.json();
+        } catch (e) {
+            return new Response(
+                JSON.stringify({
+                    error: e.toString(),
+                }),
+                {
+                    status: 400,
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                },
+            );
+        }
+        const result = await neon(JSON.stringify(body));
         return new Response(
             JSON.stringify({
                 body: result,
@@ -46,7 +55,7 @@ export default async function handler(request) {
                 error: e.toString(),
             }),
             {
-                status: 200,
+                status: 500,
                 headers: {
                     'content-type': 'application/json',
                 },

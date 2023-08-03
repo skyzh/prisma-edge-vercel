@@ -5642,7 +5642,9 @@ var require_serverless = __commonJS({
 // src/neon.ts
 var neon_exports = {};
 __export(neon_exports, {
-  default: () => neon_default
+  default: () => neon_default,
+  lastQuery: () => lastQuery,
+  lastResult: () => lastResult
 });
 module.exports = __toCommonJS(neon_exports);
 
@@ -5708,6 +5710,8 @@ function fieldToColumnType(fieldTypeId) {
 types.setTypeParser(1082, (date) => date);
 types.setTypeParser(1083, (date) => date);
 types.setTypeParser(1114, (date) => date);
+var lastQuery;
+var lastResult;
 var PrismaNeon = class {
   pool;
   sql;
@@ -5752,6 +5756,7 @@ var PrismaNeon = class {
    * Execute a query given as SQL, interpolating the given parameters.
    */
   async queryRaw(query2) {
+    lastQuery = query2;
     const { sql, args: values } = query2;
     let fields;
     let results;
@@ -5777,6 +5782,7 @@ var PrismaNeon = class {
         }
       }))
     };
+    lastResult = resultSet;
     return resultSet;
   }
   /**
@@ -5812,23 +5818,6 @@ var createNeonConnector = (config) => {
 // ../../query-engine-wasm-api/pkg/query_engine.js
 var import_meta = {};
 var wasm;
-var heap = new Array(128).fill(void 0);
-heap.push(void 0, null, true, false);
-function getObject(idx) {
-  return heap[idx];
-}
-var heap_next = heap.length;
-function dropObject(idx) {
-  if (idx < 132)
-    return;
-  heap[idx] = heap_next;
-  heap_next = idx;
-}
-function takeObject(idx) {
-  const ret = getObject(idx);
-  dropObject(idx);
-  return ret;
-}
 var cachedTextDecoder = new TextDecoder("utf-8", { ignoreBOM: true, fatal: true });
 cachedTextDecoder.decode();
 var cachedUint8Memory0 = null;
@@ -5841,6 +5830,9 @@ function getUint8Memory0() {
 function getStringFromWasm0(ptr, len) {
   return cachedTextDecoder.decode(getUint8Memory0().subarray(ptr, ptr + len));
 }
+var heap = new Array(128).fill(void 0);
+heap.push(void 0, null, true, false);
+var heap_next = heap.length;
 function addHeapObject(obj) {
   if (heap_next === heap.length)
     heap.push(heap.length + 1);
@@ -5848,6 +5840,20 @@ function addHeapObject(obj) {
   heap_next = heap[idx];
   heap[idx] = obj;
   return idx;
+}
+function getObject(idx) {
+  return heap[idx];
+}
+function dropObject(idx) {
+  if (idx < 132)
+    return;
+  heap[idx] = heap_next;
+  heap_next = idx;
+}
+function takeObject(idx) {
+  const ret = getObject(idx);
+  dropObject(idx);
+  return ret;
 }
 var WASM_VECTOR_LEN = 0;
 var cachedTextEncoder = new TextEncoder("utf-8");
@@ -6009,7 +6015,7 @@ function handleError(f, args) {
     wasm.__wbindgen_exn_store(addHeapObject(e));
   }
 }
-function __wbg_adapter_132(arg0, arg1, arg2, arg3) {
+function __wbg_adapter_134(arg0, arg1, arg2, arg3) {
   wasm.wasm_bindgen__convert__closures__invoke2_mut__h61995631f7679ef5(arg0, arg1, addHeapObject(arg2), addHeapObject(arg3));
 }
 var JsQueryable = class _JsQueryable {
@@ -6241,6 +6247,14 @@ async function load(module2, imports) {
 function getImports() {
   const imports = {};
   imports.wbg = {};
+  imports.wbg.__wbg_now_931686b195a14f9d = function() {
+    const ret = Date.now();
+    return ret;
+  };
+  imports.wbg.__wbindgen_error_new = function(arg0, arg1) {
+    const ret = new Error(getStringFromWasm0(arg0, arg1));
+    return addHeapObject(ret);
+  };
   imports.wbg.__wbg_call_9495de66fdbe016b = function() {
     return handleError(function(arg0, arg1, arg2) {
       const ret = getObject(arg0).call(getObject(arg1), getObject(arg2));
@@ -6249,10 +6263,6 @@ function getImports() {
   };
   imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
     takeObject(arg0);
-  };
-  imports.wbg.__wbindgen_error_new = function(arg0, arg1) {
-    const ret = new Error(getStringFromWasm0(arg0, arg1));
-    return addHeapObject(ret);
   };
   imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
     const ret = getStringFromWasm0(arg0, arg1);
@@ -6314,7 +6324,7 @@ function getImports() {
         const a = state0.a;
         state0.a = 0;
         try {
-          return __wbg_adapter_132(a, state0.b, arg02, arg12);
+          return __wbg_adapter_134(a, state0.b, arg02, arg12);
         } finally {
           state0.a = a;
         }
@@ -6419,18 +6429,6 @@ function getImports() {
     const ret = new Uint8Array(arg0 >>> 0);
     return addHeapObject(ret);
   };
-  imports.wbg.__wbg_get_baf4855f9a986186 = function() {
-    return handleError(function(arg0, arg1) {
-      const ret = Reflect.get(getObject(arg0), getObject(arg1));
-      return addHeapObject(ret);
-    }, arguments);
-  };
-  imports.wbg.__wbg_now_c644db5194be8437 = function(arg0) {
-    console.log(arg0)
-    return 0;
-    const ret = getObject(arg0).now();
-    return ret;
-  };
   imports.wbg.__wbg_next_88560ec06a094dea = function() {
     return handleError(function(arg0) {
       const ret = getObject(arg0).next();
@@ -6448,6 +6446,12 @@ function getImports() {
   imports.wbg.__wbg_iterator_55f114446221aa5a = function() {
     const ret = Symbol.iterator;
     return addHeapObject(ret);
+  };
+  imports.wbg.__wbg_get_baf4855f9a986186 = function() {
+    return handleError(function(arg0, arg1) {
+      const ret = Reflect.get(getObject(arg0), getObject(arg1));
+      return addHeapObject(ret);
+    }, arguments);
   };
   imports.wbg.__wbg_call_95d1ea488d03e4e8 = function() {
     return handleError(function(arg0, arg1) {
@@ -6619,7 +6623,7 @@ function getImports() {
     const ret = new Error(getStringFromWasm0(arg0, arg1));
     return addHeapObject(ret);
   };
-  imports.wbg.__wbindgen_closure_wrapper6544 = function(arg0, arg1, arg2) {
+  imports.wbg.__wbindgen_closure_wrapper6542 = function(arg0, arg1, arg2) {
     const ret = makeMutClosure(arg0, arg1, 351, __wbg_adapter_48);
     return addHeapObject(ret);
   };
@@ -6651,14 +6655,13 @@ async function init(input) {
 var query_engine_default = init;
 
 // src/util.ts
-var import_query_engine_bg = __toESM(require("./query_engine_bg-C5DLLKPH.wasm?module"), 1);
+var import_query_engine_bg = __toESM(require("./query_engine_bg-3CKJC5N5.wasm?module"), 1);
 
 // prisma/schema.prisma
 var schema_default = 'generator client {\n  provider = "prisma-client-js"\n  // previewFeatures = ["jsConnectors"]\n}\n\ndatasource db {\n  provider          = "@prisma/neon"\n  url               = env("JS_NEON_DATABASE_URL")\n  shadowDatabaseUrl = env("JS_NEON_SHADOW_DATABASE_URL")\n}\n\nmodel some_users {\n  id        Int    @id @default(autoincrement())\n  firstname String @db.VarChar(32)\n  lastname  String @db.VarChar(32)\n}\n\nmodel type_test {\n  id                    Int                         @id @default(autoincrement())\n  smallint_column       Int                         @db.SmallInt\n  smallint_column_null  Int?                        @db.SmallInt\n  int_column            Int\n  int_column_null       Int?\n  bigint_column         BigInt\n  bigint_column_null    BigInt?\n  float_column          Float                       @db.Real\n  float_column_null     Float?                      @db.Real\n  double_column         Float\n  double_column_null    Float?\n  decimal_column        Decimal                     @db.Decimal(10, 2)\n  decimal_column_null   Decimal?                    @db.Decimal(10, 2)\n  boolean_column        Boolean\n  boolean_column_null   Boolean?\n  char_column           String                      @db.Char(10)\n  char_column_null      String?                     @db.Char(10)\n  varchar_column        String                      @db.VarChar(255)\n  varchar_column_null   String?                     @db.VarChar(255)\n  text_column           String                      @db.Text\n  text_column_null      String?                     @db.Text\n  date_column           DateTime                    @db.Date\n  date_column_null      DateTime?                   @db.Date\n  time_column           DateTime                    @db.Time(0)\n  time_column_null      DateTime?                   @db.Time(0)\n  datetime_column       DateTime\n  datetime_column_null  DateTime?\n  timestamp_column      DateTime                    @db.Timestamp(0)\n  timestamp_column_null DateTime?                   @db.Timestamp(0)\n  json_column           Json\n  json_column_null      Json?\n  enum_column           type_test_enum_column\n  enum_column_null      type_test_enum_column_null?\n}\n\nenum type_test_enum_column {\n  value1\n  value2\n  value3\n}\n\nenum type_test_enum_column_null {\n  value1\n  value2\n  value3\n}\n';
 
 // src/util.ts
 async function initQueryEngine(driver) {
-  console.log("init wasm")
   await query_engine_default(import_query_engine_bg.default);
   initPanicHook();
   const QueryEngine2 = QueryEngine;
@@ -6674,9 +6677,7 @@ async function initQueryEngine(driver) {
   const logCallback = (...args) => {
     console.log(args);
   };
-  console.log("create json queryable")
   const driver1 = new JsQueryable(new Proxy2(driver.queryRaw, driver.executeRaw, driver.version, driver.close, driver.isHealthy, driver.flavor), driver.flavor);
-  console.log("create query engine")
   const engine = new QueryEngine2(queryEngineOptions, logCallback, driver1);
   return engine;
 }
@@ -6690,7 +6691,6 @@ async function query(q) {
   });
   const driver = binder(db);
   await sleep(0);
-  console.log("before init")
   const engine = await initQueryEngine(driver);
   console.log("[nodejs] connecting...");
   await engine.connect("trace");
@@ -6716,6 +6716,11 @@ async function query(q) {
   return JSON.parse(resultSet);
 }
 var neon_default = query;
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  lastQuery,
+  lastResult
+});
 /*! Bundled license information:
 
 @neondatabase/serverless/index.js:
