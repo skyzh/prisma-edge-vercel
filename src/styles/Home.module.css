@@ -1,8 +1,8 @@
 .main {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: start;
+  justify-content: flex-start;
+  align-items: flex-start;
   padding: 6rem;
   min-height: 100vh;
 }
