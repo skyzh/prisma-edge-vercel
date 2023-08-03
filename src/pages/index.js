@@ -1,8 +1,8 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -33,6 +33,7 @@ const defaultQuery = `{
 
 export default function Home() {
   const [query, setQuery] = useState(defaultQuery)
+  const router = useRouter()
   const [key, setKey] = useState('')
   const [sql, setSql] = useState('')
   const [intermediateResult, setIntermediateResult] = useState('')
@@ -41,7 +42,8 @@ export default function Home() {
 
   const submit = () => {
     async function run() {
-      const res = await fetch(`/api/neon-query?key=${key}`, { body: query, method: 'POST' })
+      const key1 = key || router.query.key
+      const res = await fetch(`/api/neon-query?key=${key1}`, { body: query, method: 'POST' })
       if (!res.ok) {
         throw Error(await res.text());
       }
@@ -64,7 +66,7 @@ export default function Home() {
       <main className={`${styles.main} ${inter.className}`}>
         <h1>Prisma on the Edge</h1>
         <textarea value={query} onChange={e => setQuery(e.target.value)} style={{ width: "100%", height: "20rem", marginTop: "2em", whiteSpace: "pre", fontFamily: "monospace" }} />
-        <input placeholder="API Key" value={key} onChange={e => setKey(e.target.value)} style={{ width: "100%", marginTop: "1em", fontFamily: "monospace" }} />
+        <input placeholder={router.query.key} value={key} onChange={e => setKey(e.target.value)} style={{ width: "100%", marginTop: "1em", fontFamily: "monospace" }} />
         <button style={{ marginTop: "1em", height: "3em", width: "10em", alignSelf: "center" }} onClick={submit}>Submit</button>
         <h3>Response</h3>
         <p style={{ whiteSpace: "pre-wrap", marginTop: "1em", fontFamily: "monospace" }}>{result}</p>
