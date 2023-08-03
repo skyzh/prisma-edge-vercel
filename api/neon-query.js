@@ -2,7 +2,7 @@ export const config = {
     runtime: 'edge',
 };
 
-import neon from './neon/neon'
+import neon, { lastQuery, lastResult } from './neon/neon'
 
 export default async function handler(request) {
     try {
@@ -41,6 +41,8 @@ export default async function handler(request) {
         return new Response(
             JSON.stringify({
                 body: result,
+                query: lastQuery,
+                result: lastResult,
             }),
             {
                 status: 200,
