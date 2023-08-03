@@ -5,7 +5,7 @@ export const config = {
 
 import { geolocation } from '@vercel/edge';
 
-import neon, { lastQuery, lastResult } from './neon/neon'
+import neon, { lastQuery, lastResult } from '../neon/neon'
 
 export default async function handler(request) {
     try {
